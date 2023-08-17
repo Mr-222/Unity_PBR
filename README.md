@@ -37,7 +37,7 @@
 - To use area light, add a "Quad Area Light" script to a quad.
 ![Instruction_AreaLight](Pics/Instruct_LTC.png)
 - To enable tessellation, modify following item in material property.
-- ![Instruction_Tessellation](Pics/Instruct_Tessellation.png)
+![Instruction_Tessellation](Pics/Instruct_Tessellation.png)
 
 ## Known Issue
 If you can't load the Unity project properly, try **[Assets/Reimport All]**.
