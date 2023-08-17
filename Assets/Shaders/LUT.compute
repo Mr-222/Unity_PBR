@@ -1,0 +1,27 @@
+#include "../ShaderLibrary/IBL.hlsl"
+
+#pragma kernel DFV
+#pragma kernel DFV_Multiscatter
+
+RWTexture2D<float4> LUT;
+RWTexture2D<float4> LUT_MultiScatter;
+
+[numthreads(4, 4, 1)]
+void DFV (uint3 id : SV_DispatchThreadID)
+{
+    float NoV = (id.x + 0.5) / 512; // x index
+    float perceptualRoughness = (id.y + 0.5) / 512; // y index
+    float roughness = perceptualRoughness * perceptualRoughness;
+    float2 dfv = DFV(NoV, roughness, 2048);
+    float dfvCharlie = DFV_Charlie_Uniform(NoV, roughness, 2048);
+    LUT[id.xy] = float4(dfv, dfvCharlie, 1.0);
+}
+
+[numthreads(4, 4, 1)]
+void DFV_Multiscatter (uint3 id : SV_DispatchThreadID)
+{
+    float NoV = (id.x + 0.5) / 512; // x index
+    float perceptualRoughness = (id.y + 0.5) / 512; // y index
+    float2 dfv = DFV_Multiscatter(NoV, perceptualRoughness * perceptualRoughness, 2048);
+    LUT_MultiScatter[id.xy] = float4(dfv, 0.0, 1.0);
+}

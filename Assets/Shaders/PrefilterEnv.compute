@@ -1,0 +1,53 @@
+#include "../ShaderLibrary/IBL.hlsl"
+
+#pragma kernel PrefilterEnv
+
+TextureCube<float4> _Cubemap;
+SamplerState point_clamp_sampler;
+RWStructuredBuffer<float4> _Result;
+int _Face;
+int _SampleCubemapSize;
+int _Resolution;
+float _PerceptualRoughness;
+
+[numthreads(1, 1, 1)]
+void PrefilterEnv(uint3 id : SV_DispatchThreadID)
+{
+    float2 uv = (float2)id.xy / (float2)_Resolution + 0.5 / (float2)_Resolution;
+    uint index = id.y * _Resolution + id.x;
+    float3 dir = DirectionFromCubemapTexel(_Face, uv);
+    
+    float3 N = dir;
+    float3 R = N;
+    float3 V = R;
+    const uint SAMPLE_COUNT = 2048;
+    float totalWeight = 0.0;
+    float3 prefilteredColor = 0.0;
+
+    for (uint i = 0; i < SAMPLE_COUNT; ++i)
+    {
+        float2 Xi = hammersley(i, SAMPLE_COUNT);
+        float3 H = hemisphereImportanceSampleDGGXWorldSpace(Xi, N, _PerceptualRoughness);
+        float3 L = normalize(reflect(-V, H));
+
+        float NdotL = max(dot(N, L), 0.0);
+        if (NdotL > 0.0)
+        {
+            float NdotH = saturate(dot(N, H));
+            float HdotV = saturate(dot(H, V));
+            float D = DistributionGGX(NdotH, _PerceptualRoughness);
+            float pdf = D * NdotH / (4.0 * HdotV) + 0.0001;
+            float resolution = _SampleCubemapSize; // resolution of source cubemap (per face)
+            // Pre-filtered importance sampling. See https://google.github.io/filament/Filament.html#lighting/imagebasedlights Chapter9.2
+            float saTexel = 4.0 * PI / (6.0 * resolution * resolution);
+            float saSample = 1.0 / (float(SAMPLE_COUNT) * pdf + 0.0001);
+            float K = 4.0;
+            float mipLevel = _PerceptualRoughness == 0.0 ? 0.0 : 0.5 * log2(K * saSample / saTexel);
+            prefilteredColor += _Cubemap.SampleLevel(point_clamp_sampler, L, mipLevel).rgb * NdotL;
+            totalWeight += NdotL;
+        }
+    }
+
+    prefilteredColor = prefilteredColor / totalWeight;
+    _Result[index] = float4(prefilteredColor.xyz, 1.0);
+}
