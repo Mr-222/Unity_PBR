@@ -1,29 +1,44 @@
-#### 介绍
-Unity URP管线下的PBR实现<br>
+[![license](https://img.shields.io/badge/license-Unlicense-blue)](LICENSE)
+# PBR for Unity's Universal Render Pipeline
 
-Unity 版本： **Unity 2021.3 LTS**  <br>
+## This project implements:
+-  **Standard material (with clear coat and energy compensation)**             
+-  **Anisotropy material**         
+-  **Cloth material**             
+-  **Temporal antialiasing (TAA)**    
+-  **Area light using Linearly Transformed Cosines**      
+-  **Parallax Occlusion Mapping**      
+-  **Tessellation (with Displacement Map)**
 
-本项目所实现的内容：
+## Results
+**Standard, Clear coat, Anisotropy, Cloth materials**
+![Mats](Pics/material%20model.png)
 
--  **标准材质**             :white_check_mark: <br>
--  **清漆**                :white_check_mark:  <br>
--  **各向异性**             :white_check_mark:  <br>
--  **布料**                :white_check_mark:  <br>
--  **时间性抗锯齿(TAA)**    :white_check_mark:  <br>
--  **实时多边形面光源(LTC)**        :white_check_mark:  <br>
--  **视差贴图(Parallax Occlusion Mapping)**       :white_check_mark:  <br>
--  **曲面细分(用于Displacement Map)**        :white_check_mark:  <br>
+**Area light**
+![LTC1](Pics/LTC.png)
 
-**标准、清漆、各向异性、布料材质**
-![image](Pics/material%20model.png)
-
-**实时面光源**
-![image](Pics/LTC.png)
-
-![image](Pics/LTC%202.jpg)
+![LTC2](Pics/LTC%202.jpg)
 
 **TAA**
-![image](Pics/TAA.jpeg)
+![TAA](Pics/TAA.jpeg)
 
-**动态曲面细分**
-![image](Pics/tessellation.jpeg)
+**Tessellation**
+![Tessellation](Pics/tessellation.jpeg)
+
+## Requirements
+- Unity 2021.3 LTS or higher.
+
+## Instruction
+- To use materials, just create new material with corresponding shader(Lit/Anisotropy/Cloth).
+- To enable clear coat or energy compensation, enable corresponding checkbox.
+![Instruction_mat](Pics/Instruct_mat.png)
+- To enable TAA, enable the RendererFeature "TAA".
+![Instruction_TAA](Pics/Instruct_TAA.png)
+- To use area light, add a "Quad Area Light" script to a quad.
+![Instruction_AreaLight](Pics/Instruct_LTC.png)
+- To enable tessellation, modify following item in material property.
+- ![Instruction_Tessellation](Pics/Instruct_Tessellation.png)
+
+## Known Issue
+If you can't load the Unity project properly, try **[Assets/Reimport All]**.
+![Issue](Pics/Reimport.png)
