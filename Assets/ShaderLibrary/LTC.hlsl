@@ -183,7 +183,11 @@ float3 LTC_Evaluate(float3 N, float3 V, float3 P, float3x3 Minv, float4 points[4
     // Clipping
     // Form factor of the polygon in direction vsum
     float len = length(vsum);
-    float z = abs(vsum.z / len);
+    float z = vsum.z / len;
+    if (face)
+    {
+        z = -z;
+    }
 
     float2 uv = float2(z * .5f + .5f, len);
     uv = uv * LUT_SCALE + LUT_BIAS;
