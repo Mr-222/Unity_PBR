@@ -37,6 +37,9 @@ UnityEditor.UI.csproj
 UnityEngine.UI.Player.csproj
 UnityEngine.UI.Tests.csproj
 UnityEngine.UI.csproj
+Unity.*
+UnityEditor.*
+UnityEngine.*
 obj/
 URP_PBR.sln.DotSettings.user
 .DS_Store
