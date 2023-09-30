@@ -71,7 +71,7 @@ internal class TAARendererFeature : ScriptableRendererFeature
                 mat.SetTexture("_PrevTex", prevRT);
             }
             
-            mat.SetFloat("_Blend", blendFactor);
+            mat.SetFloat("_Blend", Time.frameCount > 1 ? blendFactor : 1f);
             mat.SetMatrix("_InvCameraProjection", cam.nonJitteredProjectionMatrix.inverse);
             mat.SetMatrix("_FrameMatrix", prevInvVPMatrix * cam.cameraToWorldMatrix);
 
