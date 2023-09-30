@@ -2,6 +2,7 @@
 Temp/
 Logs/
 Library/
+UserSettings/
 obj/
 *.csproj
 *.user
